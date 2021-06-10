@@ -7,7 +7,7 @@ using typescripy + grpc
 ```
 git@github.com:zd-shenwenjie/management.git
 ```
-- Init submodule (zdtest-toolkit)
+- Init submodule (proto)
 ```
 git submodule init
 ```
