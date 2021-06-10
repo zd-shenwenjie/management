@@ -22,6 +22,7 @@ npm run build:proto
 
 #### How to run
 ```
+npm install
 npm run build
 npm start
 ```
