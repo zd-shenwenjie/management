@@ -1,0 +1,38 @@
+{
+  "name": "management",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "build:proto": "./scripts/compile-proto.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zd-shenwenjie/management.git"
+  },
+  "keywords": [
+    "grpc"
+  ],
+  "author": "shenwenjie",
+  "homepage": "https://github.com/zd-shenwenjie/management#readme",
+  "devDependencies": {
+    "@types/fs-extra": "8.0.1",
+    "@types/argparse": "^2.0.5",
+    "@types/google-protobuf": "^3.15.2",
+    "@types/lodash": "^4.14.168",
+    "grpc-tools": "^1.10.0",
+    "ts-protoc-gen": "^0.14.0",
+    "typescript": "^4.2.3"
+  },
+  "dependencies": {
+    "fs-extra": "8.1.0",
+    "argparse": "^2.0.1",
+    "guid-typescript": "^1.0.9",
+    "@grpc/grpc-js": "^1.2.2",
+    "google-protobuf": "^3.14.0",
+    "lodash": "^4.17.21",
+    "log4js": "^6.3.0",
+    "moment": "^2.29.1"
+  }
+}
