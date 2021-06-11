@@ -1,7 +1,7 @@
 import Subscriber from './subscriber';
-import { ZDServiceSubscriber, ZDServiceRequest, ZDServiceRequestResult } from '../proto/management_pb';
-import { ZDResponse, SERVICE_TYPEMap, SERVICE_TYPE } from '../proto/wrappers_pb';
-import logger from '../utils/logger';
+import { ZDServiceSubscriber, ZDServiceRequest, ZDServiceRequestResult } from '../lib/proto/management_pb';
+import { ZDResponse, SERVICE_TYPEMap, SERVICE_TYPE } from '../lib/proto/wrappers_pb';
+import logger from '../lib/utils/logger';
 export default class ZDServiceRequestManager {
 
     private static instance: ZDServiceRequestManager;

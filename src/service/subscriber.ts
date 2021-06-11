@@ -1,6 +1,6 @@
 import * as grpc from '@grpc/grpc-js';
-import { ZDResponse } from '../proto/wrappers_pb'
-import { ZDServiceSubscriber, ZDServiceRequest, ZDSubscriberStatus } from '../proto/management_pb'
+import { ZDResponse } from '../lib/proto/wrappers_pb'
+import { ZDServiceSubscriber, ZDServiceRequest, ZDSubscriberStatus } from '../lib/proto/management_pb'
 // import logger from '../../lib/utils/logger';
 
 const SUBSCRIBER_TIME_OUT = 60 * 1000;

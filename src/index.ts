@@ -1,6 +1,6 @@
 import { ArgumentParser } from 'argparse';
-import * as server from './grpc/grpc.server';
-import logger from './utils/logger';
+import * as server from './service/grpc.server';
+import logger from './lib/utils/logger';
 
 const argparser = new ArgumentParser({
     add_help: true,

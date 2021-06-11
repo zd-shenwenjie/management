@@ -1,14 +1,14 @@
 import * as grpc from '@grpc/grpc-js';
 import Subscriber from '../service/subscriber';
-import { SERVICE_TYPEMap, ZDRequest, ZDResponse } from '../proto/wrappers_pb'
-import { ZDServiceSubscriber, ZDServiceRequest, ZDServiceRequestResult, ZDSubscriberStatus, ZDService } from '../proto/management_pb'
+import { SERVICE_TYPEMap, ZDRequest, ZDResponse } from '../lib/proto/wrappers_pb'
+import { ZDServiceSubscriber, ZDServiceRequest, ZDServiceRequestResult, ZDSubscriberStatus, ZDService } from '../lib/proto/management_pb'
 import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
 import { StringValue } from 'google-protobuf/google/protobuf/wrappers_pb';
 import ZDServiceRequestManager from '../service/request.manager';
 import ZDServiceRequestFactory from '../service/request.factory';
 import ZDSubscriberManager from '../service/subscriber.manager';
 import ZDServiceManager from '../service/service.manager';
-import logger from '../utils/logger';
+import logger from '../lib/utils/logger';
 
 export function ping(call: grpc.ServerUnaryCall<Empty, Empty>, callback: grpc.sendUnaryData<Empty>): void {
     callback(null, new Empty());

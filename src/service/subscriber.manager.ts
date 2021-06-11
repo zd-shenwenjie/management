@@ -1,8 +1,8 @@
 import * as grpc from '@grpc/grpc-js';
-import { ZDResponse } from '../proto/wrappers_pb'
-import { ZDServiceSubscriber } from '../proto/management_pb'
+import { ZDResponse } from '../lib/proto/wrappers_pb'
+import { ZDServiceSubscriber } from '../lib/proto/management_pb'
 import Subscriber from './subscriber'
-import logger from '../utils/logger';
+import logger from '../lib/utils/logger';
 
 export default class ZDSubscriberManager {
 

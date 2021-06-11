@@ -1,9 +1,9 @@
 import fs from 'fs-extra';
 import path from 'path';
 import * as grpc from '@grpc/grpc-js';
-import { ServiceManagerService, IServiceManagerServer } from '../proto/management_grpc_pb';
+import { ServiceManagerService, IServiceManagerServer } from '../lib/proto/management_grpc_pb';
 import * as handler from './grpc.handler';
-import logger from '../utils/logger';
+import logger from '../lib/utils/logger';
 
 export async function start(host: string): Promise<void> {
     host = host ? host : '0.0.0.0:5000';
