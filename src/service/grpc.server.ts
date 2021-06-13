@@ -8,6 +8,7 @@ import logger from '../lib/utils/logger';
 export async function start(host: string): Promise<void> {
     host = host ? host : '0.0.0.0:5000';
     const server: grpc.Server = new grpc.Server();
+    // zd grpc management
     const iServiceProviderManager: IServiceManagerServer = {
         register: handler.register,
         unregister: handler.unregister,
@@ -16,12 +17,14 @@ export async function start(host: string): Promise<void> {
         ping: handler.ping
     };
     server.addService(ServiceManagerService, iServiceProviderManager);
+
+    // zd grpc service
     const protoDir = path.join(__dirname, '../proto');
     const protoFileNames = fs.readdirSync(protoDir);
     const protoFilePaths = protoFileNames.filter((fileName: string) => {
         return fileName.indexOf('grpc_pb.d.ts') !== -1 &&
             fileName.indexOf('management_grpc_pb.d.ts') === -1 &&
-            fileName.indexOf('wrappers_grpc_pb.d.ts') === -1;
+            fileName.indexOf('wrappers_grpc_pb.d.ts') === -1
     }).map((fileName: string) => {
         return '../../lib/proto/' + fileName.replace('.d.ts', '');
     });
