@@ -26,21 +26,30 @@ export async function start(host: string): Promise<void> {
         },
         send(call: grpc.ServerUnaryCall<ZDRequest, ZDResponse>, callback: grpc.sendUnaryData<ZDResponse>): void {
             const req: ZDRequest = call.request;
+            const type = req.getType();
+            logger.info('type', type);
             const data: Any | undefined = req.getData();
             if (data) {
                 const result: BlockFilter | null = data.unpack(BlockFilter.deserializeBinary, 'zdautomotive.protobuf.BlockFilter');
                 if (result) {
-                    logger.info('result:', result.toString());
+                    logger.info('unpack req data:', result.getPhyid(), result.getVlanid(), result.getSrcip(), result.getDstip(), result.getSrcport(), result.getDstport());
                     const res: ZDResponse = new ZDResponse();
+                    const anyData: any = new Any();
                     const tag: ProtocolTag = new ProtocolTag();
                     tag.setVlanid(456);
-                    const anyData: any = new Any();
-                    anyData.pack(tag.serializeBinary(), 'zdautomotive.protobuf.BlockFilter');
+                    tag.setSrcport(456);
+                    tag.setDstport(456);
+                    tag.setTag('456');
+                    anyData.pack(tag.serializeBinary(), 'zdautomotive.protobuf.ProtocolTag');
                     res.setCode(ZDResponse.ERROR_CODE.OK);
                     res.setMessage('send block filter success.');
                     res.setData(anyData);
                     callback(null, res);
+                } else {
+                    logger.info('unpack req data is null');
                 }
+            } else {
+                logger.info('req data is null');
             }
         }
     }
@@ -56,13 +65,13 @@ export async function start(host: string): Promise<void> {
     server.addService(ServiceManagerService, iServiceProviderManager);
     // zd grpc service
     const protoFileNames = fs.readdirSync(PROTO_LIB_DIR)
-    logger.info(protoFileNames);
+    // logger.info(protoFileNames);
     const protoFilePaths = protoFileNames.filter((fileName: string) => {
         return fileName.indexOf('grpc_pb.d.ts') !== -1 && SYS_SERVICE_PROTO.indexOf(fileName) === -1;
     }).map((fileName: string) => {
         return path.join(PROTO_LIB_DIR, fileName.replace('.d.ts', ''));
     });
-    logger.info(protoFilePaths);
+    // logger.info(protoFilePaths);
     for (const filePath of protoFilePaths) {
         const pb = await import(filePath);
         // logger.info('pb:', pb);
