@@ -1,7 +1,7 @@
 import * as grpc from '@grpc/grpc-js';
 import Subscriber from '../service/subscriber';
 import { SERVICE_TYPEMap, ZDRequest, ZDResponse } from '../lib/proto/wrappers_pb'
-import { ZDServiceSubscriber, ZDServiceRequest, ZDServiceRequestResult, ZDSubscriberStatus, ZDService } from '../lib/proto/management_pb'
+import { ZDServiceSubscriber, ZDServiceRequest, ZDServiceRequestResult, ZDSubscriberStatus, ZDService } from '../lib/proto/manager_pb'
 import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
 import { StringValue } from 'google-protobuf/google/protobuf/wrappers_pb';
 import ZDServiceRequestManager from '../service/request.manager';
@@ -103,22 +103,6 @@ export function getPostZDServiceRequestMethod(): (call: grpc.ServerUnaryCall<ZDR
         onDispatchServiceRequest(req, callback);
     }
 }
-
-// export function postAnyServiceRequest(call: grpc.ServerUnaryCall<AnyServiceRequest, ZDResponse>, callback: grpc.sendUnaryData<ZDResponse>): void {
-//     const anyRequest: AnyServiceRequest = call.request;
-//     if (anyRequest) {
-//         const type: SERVICE_TYPEMap[keyof SERVICE_TYPEMap] = anyRequest.getType();
-//         const req: ZDRequest | undefined = anyRequest.getRequest();
-//         if (req) {
-//             onDispatchServiceRequest(req, callback);
-//         } else {
-//             const res = new ZDResponse();
-//             res.setCode(ZDResponse.ERROR_CODE.CLIENT_ERROR);
-//             res.setMessage('req is null');
-//             callback(null, res);
-//         }
-//     }
-// }
 
 function onDispatchServiceRequest(req: ZDRequest, callback: grpc.sendUnaryData<ZDResponse>): void {
     if (req) {

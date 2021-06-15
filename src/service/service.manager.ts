@@ -1,5 +1,5 @@
 import { SERVICE_TYPEMap } from '../lib/proto/wrappers_pb';
-import { ZDService } from '../lib/proto/management_pb';
+import { ZDService } from '../lib/proto/manager_pb';
 import logger from '../lib/utils/logger';
 
 export default class ZDServiceManager {

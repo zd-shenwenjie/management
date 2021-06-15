@@ -1,5 +1,5 @@
 import Subscriber from './subscriber';
-import { ZDServiceSubscriber, ZDServiceRequest, ZDServiceRequestResult } from '../lib/proto/management_pb';
+import { ZDServiceSubscriber, ZDServiceRequest, ZDServiceRequestResult } from '../lib/proto/manager_pb';
 import { ZDResponse, SERVICE_TYPEMap, SERVICE_TYPE } from '../lib/proto/wrappers_pb';
 import logger from '../lib/utils/logger';
 export default class ZDServiceRequestManager {

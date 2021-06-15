@@ -1,6 +1,6 @@
 
 import { Guid } from 'guid-typescript';
-import { ZDServiceRequest } from '../lib/proto/management_pb';
+import { ZDServiceRequest } from '../lib/proto/manager_pb';
 import { SERVICE_TYPEMap, ZDRequest } from '../lib/proto/wrappers_pb';
 
 export default class ZDServiceRequestFactory {
