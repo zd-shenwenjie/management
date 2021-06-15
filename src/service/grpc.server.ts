@@ -17,14 +17,7 @@ export async function start(host: string): Promise<void> {
     const server: grpc.Server = new grpc.Server();
     // test
     const iNetworkManagerServer: INetworkManagerServer = {
-        test(call: grpc.ServerUnaryCall<BlockFilter, ProtocolTag>, callback: grpc.sendUnaryData<ProtocolTag>): void {
-            const req = call.request;
-            logger.info(req.getPhyid());
-            const tag: ProtocolTag = new ProtocolTag();
-            tag.setVlanid(456);
-            callback(null, tag);
-        },
-        send(call: grpc.ServerUnaryCall<ZDRequest, ZDResponse>, callback: grpc.sendUnaryData<ZDResponse>): void {
+        test(call: grpc.ServerUnaryCall<ZDRequest, ZDResponse>, callback: grpc.sendUnaryData<ZDResponse>): void {
             const req: ZDRequest = call.request;
             const type = req.getType();
             logger.info('type', type);
