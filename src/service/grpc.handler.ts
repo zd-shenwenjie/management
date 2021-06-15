@@ -92,7 +92,7 @@ export function submitRequestResult(call: grpc.ServerUnaryCall<ZDServiceRequestR
         ZDServiceRequestManager.getInstance().submit(req);
         const res = new ZDResponse();
         res.setCode(ZDResponse.ERROR_CODE.OK);
-        res.setMessage('submit request result success');
+        res.setMessage('submit req result success');
         callback(null, res);
     }
 }
@@ -111,7 +111,7 @@ function onDispatchServiceRequest(req: ZDRequest, callback: grpc.sendUnaryData<Z
         if (onInterceptServiceRequest(type)) {
             const res = new ZDResponse();
             res.setCode(ZDResponse.ERROR_CODE.SERVER_ERROR);
-            res.setMessage(`serviceType:${type} is disable`);
+            res.setMessage(`service (serviceType:${type}) is disabled`);
             callback(null, res);
         } else {
             const serviceReq: ZDServiceRequest = ZDServiceRequestFactory.getInstance().createZDServiceRequest(req, type);
