@@ -6,6 +6,8 @@ import { NetworkManagerService, INetworkManagerServer } from '../lib/proto/netwo
 import * as handler from './grpc.handler';
 import logger from '../lib/utils/logger';
 import { BlockFilter, ProtocolTag } from '../lib/proto/networkif_pb';
+import { ZDRequest, ZDResponse } from '../lib/proto/wrappers_pb';
+import { Any } from 'google-protobuf/google/protobuf/any_pb';
 
 const PROTO_LIB_DIR = path.join(__dirname, '../../src/lib/proto');
 const SYS_SERVICE_PROTO = ['wrappers_grpc_pb.d.ts', 'manager_grpc_pb.d.ts', 'networkif_grpc_pb.d.ts'];
@@ -21,6 +23,25 @@ export async function start(host: string): Promise<void> {
             const tag: ProtocolTag = new ProtocolTag();
             tag.setVlanid(456);
             callback(null, tag);
+        },
+        send(call: grpc.ServerUnaryCall<ZDRequest, ZDResponse>, callback: grpc.sendUnaryData<ZDResponse>): void {
+            const req: ZDRequest = call.request;
+            const data: Any | undefined = req.getData();
+            if (data) {
+                const result: BlockFilter | null = data.unpack(BlockFilter.deserializeBinary, 'zdautomotive.protobuf.BlockFilter');
+                if (result) {
+                    logger.info('result:', result.toString());
+                    const res: ZDResponse = new ZDResponse();
+                    const tag: ProtocolTag = new ProtocolTag();
+                    tag.setVlanid(456);
+                    const anyData: any = new Any();
+                    anyData.pack(tag.serializeBinary(), 'zdautomotive.protobuf.BlockFilter');
+                    res.setCode(ZDResponse.ERROR_CODE.OK);
+                    res.setMessage('send block filter success.');
+                    res.setData(anyData);
+                    callback(null, res);
+                }
+            }
         }
     }
     server.addService(NetworkManagerService, iNetworkManagerServer);
