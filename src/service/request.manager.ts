@@ -65,12 +65,12 @@ export default class ZDServiceRequestManager {
                 subscriberList.push(subscriber);
             }
             this.subscriptionsByServiceType.set(serviceType, subscriberList);
-            logger.debug(`add subscriptions ${serviceType}-${subscriber.getSubscriberId()}`);
+            logger.debug(`add subscriptions (serviceType:${serviceType},subscriber:${subscriber.getSubscriberId()})`);
         } else {
             subscriberList = [];
             subscriberList.push(subscriber);
             this.subscriptionsByServiceType.set(serviceType, subscriberList);
-            logger.debug(`init subscriptions ${serviceType}-${subscriber.getSubscriberId()}`);
+            logger.debug(`init subscriptions (serviceType:${serviceType},subscriber:${subscriber.getSubscriberId()})`);
         }
     }
 
@@ -99,24 +99,30 @@ export default class ZDServiceRequestManager {
         }
     }
 
-    public submit(result: ZDServiceRequestResult): void {
-        const req = result.getRequest();
-        const res = result.getResponse();
+    public submit(result: ZDServiceRequestResult): boolean {
+        const req: ZDServiceRequest | undefined = result.getRequest();
+        const res: ZDResponse | undefined = result.getResponse();
         if (req && res) {
             const session = req.getSession();
             if (session) {
                 const callback = this.requestLintenersBySession.get(session);
                 if (callback) {
                     callback(res);
+                    logger.debug(`req(${session}) callback found .`);
                     const index = this.pendingServiceRequestList.findIndex((pendingReq) => {
                         return pendingReq.getSession() === session;
                     });
                     if (index !== -1) {
                         this.pendingServiceRequestList.splice(index, 1);
+                        logger.debug(`remove req(${session}) from pending req list.`);
                     }
+                    return true;
+                } else {
+                    logger.debug(`req(${session}) callback not found .`);
                 }
             }
         }
+        return false;
     }
 
 }

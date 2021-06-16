@@ -68,13 +68,13 @@ export function keepAlive(call: grpc.ServerDuplexStream<ZDSubscriberStatus, ZDRe
             }
         }
     });
-    call.on('error', () => {
-        logger.info('keep alive stream error.');
+    call.on('error', (err) => {
         const subscriberId = ZDSubscriberManager.getInstance().deleteSubscriberByStream(call);
         const subscriber = ZDSubscriberManager.getInstance().findSubscriberById(subscriberId);
         if (subscriber && subscriber.getSubscriberType() === ZDServiceSubscriber.SUBSCRIBER_TYPE.PROVIDER) {
             ZDServiceManager.getInstance().deleteServiceById(subscriberId);
         }
+        logger.debug('keep alive stream error.', err.message);
     });
     call.on('end', () => {
         logger.info('keep alive stream end.');
@@ -87,35 +87,43 @@ export function keepAlive(call: grpc.ServerDuplexStream<ZDSubscriberStatus, ZDRe
 }
 
 export function submitRequestResult(call: grpc.ServerUnaryCall<ZDServiceRequestResult, ZDResponse>, callback: grpc.sendUnaryData<ZDResponse>): void {
-    const req: ZDServiceRequestResult = call.request;
-    if (req) {
-        ZDServiceRequestManager.getInstance().submit(req);
-        const res = new ZDResponse();
-        res.setCode(ZDResponse.ERROR_CODE.OK);
-        res.setMessage('submit req result success');
-        callback(null, res);
+    const result: ZDServiceRequestResult = call.request;
+    if (result) {
+        const b = ZDServiceRequestManager.getInstance().submit(result);
+        if (b) {
+            const res = new ZDResponse();
+            res.setCode(ZDResponse.ERROR_CODE.OK);
+            res.setMessage('submit req result success.');
+            callback(null, res);
+        } else {
+            const res = new ZDResponse();
+            res.setCode(ZDResponse.ERROR_CODE.SERVER_ERROR);
+            res.setMessage('submit req result failed.');
+        }
     }
 }
 
-export function getPostZDServiceRequestMethod(): (call: grpc.ServerUnaryCall<ZDRequest, ZDResponse>, callback: grpc.sendUnaryData<ZDResponse>) => void {
+export function getPostZDServiceRequestMethod(type: SERVICE_TYPEMap[keyof SERVICE_TYPEMap]): (call: grpc.ServerUnaryCall<ZDRequest, ZDResponse>, callback: grpc.sendUnaryData<ZDResponse>) => void {
     return (call: grpc.ServerUnaryCall<ZDRequest, ZDResponse>, callback: grpc.sendUnaryData<ZDResponse>) => {
         const req: ZDRequest = call.request;
-        onDispatchServiceRequest(req, callback);
+        onDispatchServiceRequest(type, req, callback);
     }
 }
 
-function onDispatchServiceRequest(req: ZDRequest, callback: grpc.sendUnaryData<ZDResponse>): void {
+function onDispatchServiceRequest(type: SERVICE_TYPEMap[keyof SERVICE_TYPEMap], req: ZDRequest, callback: grpc.sendUnaryData<ZDResponse>): void {
     if (req) {
-        const type: SERVICE_TYPEMap[keyof SERVICE_TYPEMap] = req.getType();
-        logger.info('onDispatchServiceRequest：', type);
+        // const type: SERVICE_TYPEMap[keyof SERVICE_TYPEMap] = req.getType();
         if (onInterceptServiceRequest(type)) {
+            logger.info('onInterceptServiceRequest:', type);
             const res = new ZDResponse();
             res.setCode(ZDResponse.ERROR_CODE.SERVER_ERROR);
             res.setMessage(`service (serviceType:${type}) is disabled`);
             callback(null, res);
         } else {
+            logger.info('onDispatchServiceRequest：', type);
             const serviceReq: ZDServiceRequest = ZDServiceRequestFactory.getInstance().createZDServiceRequest(req, type);
             ZDServiceRequestManager.getInstance().post(serviceReq, (res: ZDResponse) => {
+                logger.debug(res.getCode(), res.getMessage(), res.getData()?.toString());
                 callback(null, res);
             });
         }
@@ -126,7 +134,7 @@ function onInterceptServiceRequest(type: SERVICE_TYPEMap[keyof SERVICE_TYPEMap])
     const service = ZDServiceManager.getInstance().findServiceByType(type);
     if (service) {
         const serviceStatus = service.getStatus();
-        return serviceStatus === ZDService.SERVICE_STATUS.DISABLED
+        return serviceStatus === ZDService.SERVICE_STATUS.ENABLED;
     }
     return true;
 }
