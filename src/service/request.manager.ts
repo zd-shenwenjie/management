@@ -93,7 +93,7 @@ export default class ZDServiceRequestManager {
             this.pendingServiceRequestList.push(req);
             this.requestLintenersBySession.set(session, callback);
             subscribers.forEach((subscriber) => {
-                logger.info(`send req(${req.getType()}) to ${subscriber.getSubscriberId()}(${subscriber.getSubscriberType()})`);
+                logger.info(`send req(type:${req.getType()}) to ${subscriber.getSubscriberId()}(${subscriber.getSubscriberType() === ZDServiceSubscriber.SUBSCRIBER_TYPE.PROVIDER ? 'PROVIDER' : 'OBSERVER'})`);
                 subscriber.doPostRequest(req);
             })
         }

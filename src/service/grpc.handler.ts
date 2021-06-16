@@ -112,7 +112,6 @@ export function getPostZDServiceRequestMethod(type: SERVICE_TYPEMap[keyof SERVIC
 
 function onDispatchServiceRequest(type: SERVICE_TYPEMap[keyof SERVICE_TYPEMap], req: ZDRequest, callback: grpc.sendUnaryData<ZDResponse>): void {
     if (req) {
-        // const type: SERVICE_TYPEMap[keyof SERVICE_TYPEMap] = req.getType();
         if (onInterceptServiceRequest(type)) {
             logger.info('onInterceptServiceRequest:', type);
             const res = new ZDResponse();
@@ -134,7 +133,9 @@ function onInterceptServiceRequest(type: SERVICE_TYPEMap[keyof SERVICE_TYPEMap])
     const service = ZDServiceManager.getInstance().findServiceByType(type);
     if (service) {
         const serviceStatus = service.getStatus();
-        return serviceStatus === ZDService.SERVICE_STATUS.ENABLED;
+        return serviceStatus === ZDService.SERVICE_STATUS.DISABLED;
+    } else {
+        logger.info(`service(type:${type}) not found !`);
     }
     return true;
 }

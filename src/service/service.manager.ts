@@ -18,20 +18,20 @@ export default class ZDServiceManager {
         return ZDServiceManager.instance;
     }
 
-    // public addService(id: string, services: ZDService[]): void {
-    //     this.servicesBySubscriberId.set(id, services);
-    // }
-
     public deleteServiceById(id: string): void {
         if (this.servicesBySubscriberId.has(id)) {
             this.servicesBySubscriberId.delete(id);
         }
     }
 
-    public updateServicesStatus(id: string, services: ZDService[]): void {
-        if (id && services && services.length > 0) {
-            this.servicesBySubscriberId.set(id, services);
-            logger.info(`update (${id}) services status (${services.toString()})`);
+    public updateServicesStatus(subscriberId: string, serviceList: ZDService[]): void {
+        if (subscriberId && serviceList && serviceList.length > 0) {
+            this.servicesBySubscriberId.set(subscriberId, serviceList);
+            serviceList.forEach((service: ZDService) => {
+                const type: SERVICE_TYPEMap[keyof SERVICE_TYPEMap] = service.getType();
+                const status: ZDService.SERVICE_STATUSMap[keyof ZDService.SERVICE_STATUSMap] = service.getStatus();
+                logger.info(`${subscriberId} update service(type:${type}) status (${status === ZDService.SERVICE_STATUS.ENABLED ? 'ENABLED' : 'DISABLED'})`);
+            })
         }
     }
 
@@ -42,6 +42,8 @@ export default class ZDServiceManager {
                 const serviceType = service.getType();
                 if (type === serviceType) {
                     found = service;
+                    const status: ZDService.SERVICE_STATUSMap[keyof ZDService.SERVICE_STATUSMap] = service.getStatus();
+                    logger.info(`found service(type:${type}) is ${status === ZDService.SERVICE_STATUS.ENABLED ? 'ENABLED' : 'DISABLED'}`);
                 }
             })
         })
