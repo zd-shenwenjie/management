@@ -58,7 +58,7 @@ export function keepAlive(call: grpc.ServerDuplexStream<ZDSubscriberStatus, ZDRe
                 }
                 const response = new ZDResponse();
                 response.setCode(ZDResponse.ERROR_CODE.OK);
-                response.setMessage(`keep alive : ${subscriberId}`);
+                response.setMessage(`receive your(${subscriberId}) keep-alive request`);
                 call.write(response);
             } else {
                 const response = new ZDResponse();
@@ -122,7 +122,7 @@ function onDispatchServiceRequest(type: SERVICE_TYPEMap[keyof SERVICE_TYPEMap], 
             logger.info('onDispatchServiceRequest：', type);
             const serviceReq: ZDServiceRequest = ZDServiceRequestFactory.getInstance().createZDServiceRequest(req, type);
             ZDServiceRequestManager.getInstance().post(serviceReq, (res: ZDResponse) => {
-                logger.debug(res.getCode(), res.getMessage(), res.getData()?.toString());
+                logger.debug("send result to callback", res.getCode(), res.getMessage());
                 callback(null, res);
             });
         }
