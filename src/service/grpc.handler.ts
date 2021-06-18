@@ -32,6 +32,7 @@ export function register(call: grpc.ServerWritableStream<ZDServiceSubscriber, ZD
 export function unregister(call: grpc.ServerUnaryCall<StringValue, ZDResponse>, callback: grpc.sendUnaryData<ZDResponse>): void {
     const subscriberId: string = call.request.getValue();
     if (subscriberId) {
+        logger.info('unregister:', subscriberId);
         ZDServiceRequestManager.getInstance().unsubscribe(subscriberId);
         ZDSubscriberManager.getInstance().deleteSubscriberById(subscriberId);
         ZDServiceManager.getInstance().deleteServiceById(subscriberId);
